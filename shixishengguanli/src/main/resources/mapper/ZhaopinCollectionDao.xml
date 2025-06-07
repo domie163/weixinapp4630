@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.ZhaopinCollectionDao">
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        a.id as id
+        ,a.zhaopin_id as zhaopinId
+        ,a.xuesheng_id as xueshengId
+        ,a.zhaopin_collection_types as zhaopinCollectionTypes
+        ,a.insert_time as insertTime
+        ,a.create_time as createTime
+    </sql>
+    <select id="selectListView" parameterType="map" resultType="com.entity.view.ZhaopinCollectionView" >
+        SELECT
+        <include refid="Base_Column_List" />
+        <!-- 级联表的字段 -->
+        ,xuesheng.xuesheng_name as xueshengName
+        ,xuesheng.xuesheng_phone as xueshengPhone
+        ,xuesheng.xuesheng_id_number as xueshengIdNumber
+        ,xuesheng.xuesheng_photo as xueshengPhoto
+        ,xuesheng.xuesheng_email as xueshengEmail
+        ,zhaopin.gongsi_id as zhaopinGongsiId
+        ,zhaopin.zhaopin_name as zhaopinName
+        ,zhaopin.zhaopin_photo as zhaopinPhoto
+        ,zhaopin.zhaopin_daiyu as zhaopinDaiyu
+        ,zhaopin.zhaopin_address as zhaopinAddress
+        ,zhaopin.lianxiren_name as lianxirenName
+        ,zhaopin.zhaopin_phone as zhaopinPhone
+        ,zhaopin.zhaopin_types as zhaopinTypes
+        ,zhaopin.leixing_types as leixingTypes
+        ,zhaopin.zhaopin_renshu_number as zhaopinRenshuNumber
+        ,zhaopin.shangxia_types as shangxiaTypes
+        ,zhaopin.zhaopin_content as zhaopinContent
+
+        FROM zhaopin_collection  a
+        left JOIN xuesheng xuesheng ON a.xuesheng_id = xuesheng.id
+        left JOIN zhaopin zhaopin ON a.zhaopin_id = zhaopin.id
+
+        <where>
+            <if test="params.ids != null">
+                and a.id in
+                <foreach item="item" index="index" collection="params.ids" open="(" separator="," close=")">
+                #{item}
+                </foreach>
+            </if>
+            <if test="params.zhaopinId != null and params.zhaopinId != ''">
+                and (
+                    a.zhaopin_id = #{params.zhaopinId}
+                )
+            </if>
+            <if test="params.xueshengId != null and params.xueshengId != ''">
+                and (
+                    a.xuesheng_id = #{params.xueshengId}
+                )
+            </if>
+            <if test="params.zhaopinCollectionTypes != null and params.zhaopinCollectionTypes != ''">
+                and a.zhaopin_collection_types = #{params.zhaopinCollectionTypes}
+            </if>
+            <if test=" params.insertTimeStart != '' and params.insertTimeStart != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(a.insert_time) >= UNIX_TIMESTAMP(#{params.insertTimeStart}) ]]>
+            </if>
+            <if test=" params.insertTimeEnd != '' and params.insertTimeEnd != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(a.insert_time) <= UNIX_TIMESTAMP(#{params.insertTimeEnd}) ]]>
+            </if>
+
+                <!-- 判断学生的id不为空 -->
+            <if test=" params.xueshengIdNotNull != '' and params.xueshengIdNotNull != null and params.xueshengIdNotNull != 'null' ">
+                and a.xuesheng_id IS NOT NULL
+            </if>
+            <if test=" params.xueshengName != '' and params.xueshengName != null and params.xueshengName != 'null' ">
+                and xuesheng.xuesheng_name like CONCAT('%',#{params.xueshengName},'%')
+            </if>
+            <if test=" params.xueshengPhone != '' and params.xueshengPhone != null and params.xueshengPhone != 'null' ">
+                and xuesheng.xuesheng_phone like CONCAT('%',#{params.xueshengPhone},'%')
+            </if>
+            <if test=" params.xueshengIdNumber != '' and params.xueshengIdNumber != null and params.xueshengIdNumber != 'null' ">
+                and xuesheng.xuesheng_id_number like CONCAT('%',#{params.xueshengIdNumber},'%')
+            </if>
+            <if test=" params.xueshengEmail != '' and params.xueshengEmail != null and params.xueshengEmail != 'null' ">
+                and xuesheng.xuesheng_email like CONCAT('%',#{params.xueshengEmail},'%')
+            </if>
+                <!-- 判断职位招聘的id不为空 -->
+            <if test=" params.zhaopinIdNotNull != '' and params.zhaopinIdNotNull != null and params.zhaopinIdNotNull != 'null' ">
+                and a.zhaopin_id IS NOT NULL
+            </if>
+            <if test="params.gongsiId != null  and params.gongsiId != ''">
+                and zhaopin.gongsi_id = #{params.gongsiId}
+            </if>
+            <if test=" params.zhaopinName != '' and params.zhaopinName != null and params.zhaopinName != 'null' ">
+                and zhaopin.zhaopin_name like CONCAT('%',#{params.zhaopinName},'%')
+            </if>
+            <if test=" params.zhaopinDaiyu != '' and params.zhaopinDaiyu != null and params.zhaopinDaiyu != 'null' ">
+                and zhaopin.zhaopin_daiyu like CONCAT('%',#{params.zhaopinDaiyu},'%')
+            </if>
+            <if test=" params.zhaopinAddress != '' and params.zhaopinAddress != null and params.zhaopinAddress != 'null' ">
+                and zhaopin.zhaopin_address like CONCAT('%',#{params.zhaopinAddress},'%')
+            </if>
+            <if test=" params.lianxirenName != '' and params.lianxirenName != null and params.lianxirenName != 'null' ">
+                and zhaopin.lianxiren_name like CONCAT('%',#{params.lianxirenName},'%')
+            </if>
+            <if test=" params.zhaopinPhone != '' and params.zhaopinPhone != null and params.zhaopinPhone != 'null' ">
+                and zhaopin.zhaopin_phone like CONCAT('%',#{params.zhaopinPhone},'%')
+            </if>
+            <if test="params.zhaopinTypes != null  and params.zhaopinTypes != ''">
+                and zhaopin.zhaopin_types = #{params.zhaopinTypes}
+            </if>
+
+            <if test="params.leixingTypes != null  and params.leixingTypes != ''">
+                and zhaopin.leixing_types = #{params.leixingTypes}
+            </if>
+
+            <if test="params.zhaopinRenshuNumberStart != null  and params.zhaopinRenshuNumberStart != '' ">
+                <![CDATA[  and zhaopin.zhaopin_renshu_number >= #{params.zhaopinRenshuNumberStart}   ]]>
+            </if>
+            <if test="params.zhaopinRenshuNumberEnd != null  and params.zhaopinRenshuNumberEnd != '' ">
+                <![CDATA[  and zhaopin.zhaopin_renshu_number <= #{params.zhaopinRenshuNumberEnd}   ]]>
+            </if>
+            <if test="params.zhaopinRenshuNumber != null  and params.zhaopinRenshuNumber != '' ">
+                and zhaopin.zhaopin_renshu_number = #{params.zhaopinRenshuNumber}
+            </if>
+            <if test="params.shangxiaTypes != null  and params.shangxiaTypes != ''">
+                and zhaopin.shangxia_types = #{params.shangxiaTypes}
+            </if>
+
+            <if test=" params.zhaopinContent != '' and params.zhaopinContent != null and params.zhaopinContent != 'null' ">
+                and zhaopin.zhaopin_content like CONCAT('%',#{params.zhaopinContent},'%')
+            </if>
+        </where>
+        order by a.${params.sort} ${params.order}
+    </select>
+
+</mapper>

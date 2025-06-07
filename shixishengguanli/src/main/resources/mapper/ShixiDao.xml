@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.ShixiDao">
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        a.id as id
+        ,a.xuesheng_id as xueshengId
+        ,a.shixi_uuid_number as shixiUuidNumber
+        ,a.shixi_name as shixiName
+        ,a.shixi_types as shixiTypes
+        ,a.shixi_danweimingcheng as shixiDanweimingcheng
+        ,a.hangye_types as hangyeTypes
+        ,a.suoshuleixing_types as suoshuleixingTypes
+        ,a.qiye_guimo as qiyeGuimo
+        ,a.shixi_danweidizhi as shixiDanweidizhi
+        ,a.jinru_time as jinruTime
+        ,a.shixi_gangwei as shixiGangwei
+        ,a.shixi_gangwei_fangxiang as shixiGangweiFangxiang
+        ,a.daijiao_types as daijiaoTypes
+        ,a.buzhu_types as buzhuTypes
+        ,a.sushe_types as susheTypes
+        ,a.xinzi as xinzi
+        ,a.xianzhu_address as xianzhuAddress
+        ,a.tonggongsixiaoyou_content as tonggongsixiaoyouContent
+        ,a.zhaopin_shifou_types as zhaopinShifouTypes
+        ,a.danweizhuanye_content as danweizhuanyeContent
+        ,a.danweirenshi_content as danweirenshiContent
+        ,a.manyi_types as manyiTypes
+        ,a.shixi_kaoyanxuexiao as shixiKaoyanxuexiao
+        ,a.kaoyanzhuanye_types as kaoyanzhuanyeTypes
+        ,a.shixi_kaoyanfangxiang as shixiKaoyanfangxiang
+        ,a.shixi_kaogongdiqu as shixiKaogongdiqu
+        ,a.shixi_kaogongzhiwei as shixiKaogongzhiwei
+        ,a.kaogong_time as kaogongTime
+        ,a.shixi_liuxue as shixiLiuxue
+        ,a.shixi_liuxue_daxue as shixiLiuxueDaxue
+        ,a.shixi_liuxue_danwei as shixiLiuxueDanwei
+        ,a.shixi_content as shixiContent
+        ,a.insert_time as insertTime
+        ,a.create_time as createTime
+    </sql>
+    <select id="selectListView" parameterType="map" resultType="com.entity.view.ShixiView" >
+        SELECT
+        <include refid="Base_Column_List" />
+        <!-- 级联表的字段 -->
+        ,xuesheng.xuesheng_name as xueshengName
+        ,xuesheng.xuesheng_phone as xueshengPhone
+        ,xuesheng.xuesheng_id_number as xueshengIdNumber
+        ,xuesheng.xuesheng_photo as xueshengPhoto
+        ,xuesheng.xuesheng_email as xueshengEmail
+
+        FROM shixi  a
+        left JOIN xuesheng xuesheng ON a.xuesheng_id = xuesheng.id
+
+        <where>
+            <if test="params.ids != null">
+                and a.id in
+                <foreach item="item" index="index" collection="params.ids" open="(" separator="," close=")">
+                #{item}
+                </foreach>
+            </if>
+            <if test="params.xueshengId != null and params.xueshengId != ''">
+                and (
+                    a.xuesheng_id = #{params.xueshengId}
+                )
+            </if>
+            <if test=" params.shixiUuidNumber != '' and params.shixiUuidNumber != null and params.shixiUuidNumber != 'null' ">
+                and a.shixi_uuid_number like CONCAT('%',#{params.shixiUuidNumber},'%')
+            </if>
+            <if test=" params.shixiName != '' and params.shixiName != null and params.shixiName != 'null' ">
+                and a.shixi_name like CONCAT('%',#{params.shixiName},'%')
+            </if>
+            <if test="params.shixiTypes != null and params.shixiTypes != ''">
+                and a.shixi_types = #{params.shixiTypes}
+            </if>
+            <if test=" params.shixiDanweimingcheng != '' and params.shixiDanweimingcheng != null and params.shixiDanweimingcheng != 'null' ">
+                and a.shixi_danweimingcheng like CONCAT('%',#{params.shixiDanweimingcheng},'%')
+            </if>
+            <if test="params.hangyeTypes != null and params.hangyeTypes != ''">
+                and a.hangye_types = #{params.hangyeTypes}
+            </if>
+            <if test="params.suoshuleixingTypes != null and params.suoshuleixingTypes != ''">
+                and a.suoshuleixing_types = #{params.suoshuleixingTypes}
+            </if>
+            <if test=" params.qiyeGuimo != '' and params.qiyeGuimo != null and params.qiyeGuimo != 'null' ">
+                and a.qiye_guimo like CONCAT('%',#{params.qiyeGuimo},'%')
+            </if>
+            <if test=" params.shixiDanweidizhi != '' and params.shixiDanweidizhi != null and params.shixiDanweidizhi != 'null' ">
+                and a.shixi_danweidizhi like CONCAT('%',#{params.shixiDanweidizhi},'%')
+            </if>
+            <if test=" params.jinruTimeStart != '' and params.jinruTimeStart != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(a.jinru_time) >= UNIX_TIMESTAMP(#{params.jinruTimeStart}) ]]>
+            </if>
+            <if test=" params.jinruTimeEnd != '' and params.jinruTimeEnd != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(a.jinru_time) <= UNIX_TIMESTAMP(#{params.jinruTimeEnd}) ]]>
+            </if>
+            <if test=" params.shixiGangwei != '' and params.shixiGangwei != null and params.shixiGangwei != 'null' ">
+                and a.shixi_gangwei like CONCAT('%',#{params.shixiGangwei},'%')
+            </if>
+            <if test=" params.shixiGangweiFangxiang != '' and params.shixiGangweiFangxiang != null and params.shixiGangweiFangxiang != 'null' ">
+                and a.shixi_gangwei_fangxiang like CONCAT('%',#{params.shixiGangweiFangxiang},'%')
+            </if>
+            <if test="params.daijiaoTypes != null and params.daijiaoTypes != ''">
+                and a.daijiao_types = #{params.daijiaoTypes}
+            </if>
+            <if test="params.buzhuTypes != null and params.buzhuTypes != ''">
+                and a.buzhu_types = #{params.buzhuTypes}
+            </if>
+            <if test="params.susheTypes != null and params.susheTypes != ''">
+                and a.sushe_types = #{params.susheTypes}
+            </if>
+            <if test="params.xinziStart != null ">
+                <![CDATA[  and a.xinzi >= #{params.xinziStart}   ]]>
+            </if>
+            <if test="params.xinziEnd != null ">
+                <![CDATA[  and a.xinzi <= #{params.xinziEnd}   ]]>
+            </if>
+            <if test=" params.xianzhuAddress != '' and params.xianzhuAddress != null and params.xianzhuAddress != 'null' ">
+                and a.xianzhu_address like CONCAT('%',#{params.xianzhuAddress},'%')
+            </if>
+            <if test=" params.tonggongsixiaoyouContent != '' and params.tonggongsixiaoyouContent != null and params.tonggongsixiaoyouContent != 'null' ">
+                and a.tonggongsixiaoyou_content like CONCAT('%',#{params.tonggongsixiaoyouContent},'%')
+            </if>
+            <if test="params.zhaopinShifouTypes != null and params.zhaopinShifouTypes != ''">
+                and a.zhaopin_shifou_types = #{params.zhaopinShifouTypes}
+            </if>
+            <if test=" params.danweizhuanyeContent != '' and params.danweizhuanyeContent != null and params.danweizhuanyeContent != 'null' ">
+                and a.danweizhuanye_content like CONCAT('%',#{params.danweizhuanyeContent},'%')
+            </if>
+            <if test=" params.danweirenshiContent != '' and params.danweirenshiContent != null and params.danweirenshiContent != 'null' ">
+                and a.danweirenshi_content like CONCAT('%',#{params.danweirenshiContent},'%')
+            </if>
+            <if test="params.manyiTypes != null and params.manyiTypes != ''">
+                and a.manyi_types = #{params.manyiTypes}
+            </if>
+            <if test=" params.shixiKaoyanxuexiao != '' and params.shixiKaoyanxuexiao != null and params.shixiKaoyanxuexiao != 'null' ">
+                and a.shixi_kaoyanxuexiao like CONCAT('%',#{params.shixiKaoyanxuexiao},'%')
+            </if>
+            <if test="params.kaoyanzhuanyeTypes != null and params.kaoyanzhuanyeTypes != ''">
+                and a.kaoyanzhuanye_types = #{params.kaoyanzhuanyeTypes}
+            </if>
+            <if test=" params.shixiKaoyanfangxiang != '' and params.shixiKaoyanfangxiang != null and params.shixiKaoyanfangxiang != 'null' ">
+                and a.shixi_kaoyanfangxiang like CONCAT('%',#{params.shixiKaoyanfangxiang},'%')
+            </if>
+            <if test=" params.shixiKaogongdiqu != '' and params.shixiKaogongdiqu != null and params.shixiKaogongdiqu != 'null' ">
+                and a.shixi_kaogongdiqu like CONCAT('%',#{params.shixiKaogongdiqu},'%')
+            </if>
+            <if test=" params.shixiKaogongzhiwei != '' and params.shixiKaogongzhiwei != null and params.shixiKaogongzhiwei != 'null' ">
+                and a.shixi_kaogongzhiwei like CONCAT('%',#{params.shixiKaogongzhiwei},'%')
+            </if>
+            <if test=" params.kaogongTimeStart != '' and params.kaogongTimeStart != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(a.kaogong_time) >= UNIX_TIMESTAMP(#{params.kaogongTimeStart}) ]]>
+            </if>
+            <if test=" params.kaogongTimeEnd != '' and params.kaogongTimeEnd != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(a.kaogong_time) <= UNIX_TIMESTAMP(#{params.kaogongTimeEnd}) ]]>
+            </if>
+            <if test=" params.shixiLiuxue != '' and params.shixiLiuxue != null and params.shixiLiuxue != 'null' ">
+                and a.shixi_liuxue like CONCAT('%',#{params.shixiLiuxue},'%')
+            </if>
+            <if test=" params.shixiLiuxueDaxue != '' and params.shixiLiuxueDaxue != null and params.shixiLiuxueDaxue != 'null' ">
+                and a.shixi_liuxue_daxue like CONCAT('%',#{params.shixiLiuxueDaxue},'%')
+            </if>
+            <if test=" params.shixiLiuxueDanwei != '' and params.shixiLiuxueDanwei != null and params.shixiLiuxueDanwei != 'null' ">
+                and a.shixi_liuxue_danwei like CONCAT('%',#{params.shixiLiuxueDanwei},'%')
+            </if>
+            <if test=" params.shixiContent != '' and params.shixiContent != null and params.shixiContent != 'null' ">
+                and a.shixi_content like CONCAT('%',#{params.shixiContent},'%')
+            </if>
+            <if test=" params.insertTimeStart != '' and params.insertTimeStart != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(a.insert_time) >= UNIX_TIMESTAMP(#{params.insertTimeStart}) ]]>
+            </if>
+            <if test=" params.insertTimeEnd != '' and params.insertTimeEnd != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(a.insert_time) <= UNIX_TIMESTAMP(#{params.insertTimeEnd}) ]]>
+            </if>
+
+                <!-- 判断学生的id不为空 -->
+            <if test=" params.xueshengIdNotNull != '' and params.xueshengIdNotNull != null and params.xueshengIdNotNull != 'null' ">
+                and a.xuesheng_id IS NOT NULL
+            </if>
+            <if test=" params.xueshengName != '' and params.xueshengName != null and params.xueshengName != 'null' ">
+                and xuesheng.xuesheng_name like CONCAT('%',#{params.xueshengName},'%')
+            </if>
+            <if test=" params.xueshengPhone != '' and params.xueshengPhone != null and params.xueshengPhone != 'null' ">
+                and xuesheng.xuesheng_phone like CONCAT('%',#{params.xueshengPhone},'%')
+            </if>
+            <if test=" params.xueshengIdNumber != '' and params.xueshengIdNumber != null and params.xueshengIdNumber != 'null' ">
+                and xuesheng.xuesheng_id_number like CONCAT('%',#{params.xueshengIdNumber},'%')
+            </if>
+            <if test=" params.xueshengEmail != '' and params.xueshengEmail != null and params.xueshengEmail != 'null' ">
+                and xuesheng.xuesheng_email like CONCAT('%',#{params.xueshengEmail},'%')
+            </if>
+        </where>
+        order by a.${params.sort} ${params.order}
+    </select>
+
+</mapper>
